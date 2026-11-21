@@ -224,11 +224,39 @@ body {
 
 /* 底部統計 */
 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid var(--color-border);
   font-size: 0.9rem;
   color: var(--color-text-muted);
+}
+
+.btn-clear {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+}
+
+/* 沒有已完成項目時的停用狀態 */
+.btn-clear:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 /* 手機版 */

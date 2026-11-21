@@ -18,6 +18,7 @@
   var listEl = document.getElementById('todo-list');
   var emptyHint = document.getElementById('empty-hint');
   var remainingEl = document.getElementById('remaining-count');
+  var clearBtn = document.getElementById('clear-completed');
   var themeBtn = document.getElementById('theme-toggle');
   var filterBtns = document.querySelectorAll('.btn-filter');
 
@@ -155,6 +156,9 @@
     // 未完成數量以整體資料計算,不受篩選影響
     var remaining = todos.filter(function (t) { return !t.done; }).length;
     remainingEl.textContent = '未完成:' + remaining + ' 項';
+
+    // 沒有已完成項目時停用「清除已完成」按鈕
+    clearBtn.disabled = !todos.some(function (t) { return t.done; });
   }
 
   // 切換篩選條件
@@ -193,6 +197,22 @@
     saveTodos();
     render();
   }
+
+  // 清除所有已完成的待辦(不可復原,需先確認)
+  function clearCompleted() {
+    const completedCount = todos.filter(function (t) { return t.done; }).length;
+    if (completedCount === 0) return;
+
+    if (!confirm('確定要刪除所有已完成的事項(共 ' + completedCount + ' 項)嗎?此動作無法復原。')) {
+      return;
+    }
+
+    todos = todos.filter(function (t) { return !t.done; });
+    saveTodos();
+    render();
+  }
+
+  clearBtn.addEventListener('click', clearCompleted);
 
   // 表單送出(按鈕或 Enter)
   form.addEventListener('submit', function (e) {
