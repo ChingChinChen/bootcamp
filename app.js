@@ -6,10 +6,11 @@
   var THEME_KEY = 'todo-app-theme';
 
   // 各篩選條件下,清單為空時的提示文字
+  // active / completed 僅在「有資料但被篩選掉」時使用,要讓使用者知道項目沒有被刪除
   var EMPTY_MESSAGES = {
     all: '還沒有任何待辦事項,新增一個吧!',
-    active: '太棒了,沒有未完成的事項!',
-    completed: '還沒有已完成的事項。'
+    active: '目前沒有未完成的事項。你的項目沒有被刪除,只是被篩選條件隱藏了,切回「全部」就能看到。',
+    completed: '目前沒有已完成的事項。你的項目沒有被刪除,只是被篩選條件隱藏了,切回「全部」就能看到。'
   };
 
   // 取得 DOM 元素
@@ -141,8 +142,9 @@
       listEl.appendChild(li);
     });
 
-    // 顯示的清單為空時,依篩選條件顯示對應提示
-    emptyHint.textContent = EMPTY_MESSAGES[currentFilter];
+    // 整體資料為空時顯示一般空清單提示;有資料但被篩選掉時,顯示對應的篩選提示
+    const hintKey = todos.length === 0 ? 'all' : currentFilter;
+    emptyHint.textContent = EMPTY_MESSAGES[hintKey];
     emptyHint.hidden = visible.length > 0;
 
     // 更新篩選按鈕的選中狀態
