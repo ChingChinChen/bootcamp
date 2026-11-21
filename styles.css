@@ -1,0 +1,170 @@
+/* 顏色變數 */
+:root {
+  --color-bg: #f0f2f8;
+  --color-card: #ffffff;
+  --color-primary: #4f6df5;
+  --color-primary-hover: #3b57d9;
+  --color-text: #2d3142;
+  --color-text-muted: #9aa0b4;
+  --color-border: #e1e4ee;
+  --color-danger: #e5484d;
+  --color-danger-bg: #fdecec;
+  --shadow-card: 0 8px 24px rgba(45, 49, 66, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 40px 16px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+}
+
+/* 卡片:置中、最大寬度 520px */
+.card {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  background: var(--color-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+/* 新增表單 */
+.todo-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.todo-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  font-size: 1rem;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.todo-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.18);
+}
+
+.btn-add {
+  padding: 10px 18px;
+  font-size: 1rem;
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--color-primary-hover);
+}
+
+/* 待辦清單 */
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.todo-text {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+/* 已完成:刪除線並淡化 */
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.btn-delete {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-delete:hover {
+  background: var(--color-danger-bg);
+}
+
+/* 空清單提示 */
+.empty-hint {
+  margin: 24px 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* 底部統計 */
+.footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* 手機版 */
+@media (max-width: 480px) {
+  body {
+    padding: 16px 12px;
+  }
+
+  .card {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+}
