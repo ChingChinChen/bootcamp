@@ -8,13 +8,24 @@
 </head>
 <body>
   <main class="card">
-    <h1 class="title">待辦清單</h1>
+    <!-- 標題列:標題 + 深淺色切換按鈕 -->
+    <header class="header">
+      <h1 class="title">待辦清單</h1>
+      <button id="theme-toggle" class="btn-theme" type="button"></button>
+    </header>
 
     <!-- 新增待辦事項的表單 -->
     <form id="todo-form" class="todo-form" autocomplete="off">
       <input id="todo-input" class="todo-input" type="text" placeholder="要做什麼呢?" aria-label="待辦事項內容">
       <button class="btn-add" type="submit">新增</button>
     </form>
+
+    <!-- 篩選按鈕 -->
+    <div id="filters" class="filters" role="group" aria-label="篩選待辦事項">
+      <button type="button" class="btn-filter active" data-filter="all" aria-pressed="true">全部</button>
+      <button type="button" class="btn-filter" data-filter="active" aria-pressed="false">未完成</button>
+      <button type="button" class="btn-filter" data-filter="completed" aria-pressed="false">已完成</button>
+    </div>
 
     <!-- 待辦清單 -->
     <ul id="todo-list" class="todo-list"></ul>

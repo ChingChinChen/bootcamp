@@ -3,6 +3,14 @@
 
   // localStorage 的儲存鍵名
   var STORAGE_KEY = 'todo-app-items';
+  var THEME_KEY = 'todo-app-theme';
+
+  // 各篩選條件下,清單為空時的提示文字
+  var EMPTY_MESSAGES = {
+    all: '還沒有任何待辦事項,新增一個吧!',
+    active: '太棒了,沒有未完成的事項!',
+    completed: '還沒有已完成的事項。'
+  };
 
   // 取得 DOM 元素
   var form = document.getElementById('todo-form');
@@ -10,9 +18,64 @@
   var listEl = document.getElementById('todo-list');
   var emptyHint = document.getElementById('empty-hint');
   var remainingEl = document.getElementById('remaining-count');
+  var themeBtn = document.getElementById('theme-toggle');
+  var filterBtns = document.querySelectorAll('.btn-filter');
 
   // 待辦資料:[{ id, text, done }]
   var todos = loadTodos();
+
+  // 目前的篩選條件:all / active / completed
+  var currentFilter = 'all';
+
+  // ---------- 深色模式 ----------
+
+  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  // 讀取使用者手動選擇的主題,從未選擇過則回傳 null
+  function getStoredTheme() {
+    try {
+      var value = localStorage.getItem(THEME_KEY);
+      return value === 'light' || value === 'dark' ? value : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 目前生效的主題:優先使用手動選擇,否則跟隨作業系統
+  function getEffectiveTheme() {
+    return getStoredTheme() || (darkQuery.matches ? 'dark' : 'light');
+  }
+
+  // 套用主題並更新切換按鈕的圖示與文字
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀️ 淺色模式' : '🌙 深色模式';
+  }
+
+  // 點擊按鈕切換主題,並記住使用者的選擇
+  themeBtn.addEventListener('click', function () {
+    var next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (e) {
+      // 儲存失敗時仍可在本次瀏覽中切換
+    }
+    applyTheme(next);
+  });
+
+  // 尚未手動選擇時,作業系統設定改變就同步更新
+  function onSystemThemeChange() {
+    if (!getStoredTheme()) applyTheme(getEffectiveTheme());
+  }
+  if (darkQuery.addEventListener) {
+    darkQuery.addEventListener('change', onSystemThemeChange);
+  } else if (darkQuery.addListener) {
+    darkQuery.addListener(onSystemThemeChange);
+  }
+
+  applyTheme(getEffectiveTheme());
+
+  // ---------- 待辦資料 ----------
 
   // 從 localStorage 讀取資料,格式錯誤時回傳空陣列
   function loadTodos() {
@@ -38,7 +101,14 @@
   function render() {
     listEl.innerHTML = '';
 
-    todos.forEach(function (todo) {
+    // 依篩選條件取出要顯示的項目
+    var visible = todos.filter(function (t) {
+      if (currentFilter === 'active') return !t.done;
+      if (currentFilter === 'completed') return t.done;
+      return true;
+    });
+
+    visible.forEach(function (todo) {
       var li = document.createElement('li');
       li.className = 'todo-item' + (todo.done ? ' done' : '');
 
@@ -71,13 +141,29 @@
       listEl.appendChild(li);
     });
 
-    // 清單為空時顯示提示
-    emptyHint.hidden = todos.length > 0;
+    // 顯示的清單為空時,依篩選條件顯示對應提示
+    emptyHint.textContent = EMPTY_MESSAGES[currentFilter];
+    emptyHint.hidden = visible.length > 0;
 
-    // 更新未完成數量
+    // 更新篩選按鈕的選中狀態
+    filterBtns.forEach(function (btn) {
+      var isActive = btn.getAttribute('data-filter') === currentFilter;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+
+    // 未完成數量以整體資料計算,不受篩選影響
     var remaining = todos.filter(function (t) { return !t.done; }).length;
     remainingEl.textContent = '未完成:' + remaining + ' 項';
   }
+
+  // 切換篩選條件
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      currentFilter = btn.getAttribute('data-filter');
+      render();
+    });
+  });
 
   // 新增待辦
   function addTodo(text) {
@@ -87,6 +173,8 @@
       done: false
     });
     saveTodos();
+    // 在「已完成」篩選下新增時,切回「全部」才看得到新項目
+    if (currentFilter === 'completed') currentFilter = 'all';
     render();
   }
 
